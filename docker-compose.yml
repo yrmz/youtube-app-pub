@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  db:
+    build: ./db #Dockerfileからビルドすることを示す
+    image: mysql
+    volumes:
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+    environment:
+      TZ: Asia/Tokyo #Dockerfileと同様にTimeZoneを設定
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: youtube_app
+
+  backend:
+    build: ./backend
+    image: backend
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+    volumes:
+      - ./backend:/go/app
+    ports:
+      - 3001:8080
+    depends_on:
+      - db
+    tty: true
+
+  frontend:
+    build: ./frontend
+    image: frontend
+    volumes:
+      - ./frontend:/usr/src/app
+    command: sh -c "cd app && npm run dev"
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    tty: true
