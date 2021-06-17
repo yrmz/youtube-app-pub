@@ -2,7 +2,6 @@ import { AddBadge } from 'component/atoms/addBadge';
 import { TagBadge } from 'component/atoms/tagBadge';
 import { CustomModal } from 'component/utils/modal';
 import { AddTag } from 'container/channel/addTag';
-import { useChannelTags } from 'hooks/backend/channelTags';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 

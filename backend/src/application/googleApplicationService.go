@@ -1,22 +1,27 @@
 package application
 
 import (
-	"api/src/middleware/container"
+	"api/src/domain/repository"
+	"api/src/infrastructure/persistence"
 )
 
 type googleApplicationService struct {
-	container *container.DiContainer
+	UserRepository repository.IUserRepository
+	ConnClose      func()
 }
 
 func NewGoogleApplicationServie() *googleApplicationService {
-	container := container.SetDiContainer()
+	mysql := persistence.NewMySqlConnection()
 
 	return &googleApplicationService{
-		container: container,
+		UserRepository: persistence.NewUserPersistence(mysql),
+		ConnClose:      mysql.Close,
 	}
 }
 
 func (g *googleApplicationService) GetAccessToken(userId uint) string {
-	user := g.container.UserRepository.FindByUserId(userId)
+	user := g.UserRepository.FindByUserId(userId)
+	defer g.ConnClose()
+
 	return user.Token
 }

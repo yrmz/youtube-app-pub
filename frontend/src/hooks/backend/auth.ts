@@ -10,7 +10,6 @@ const REDIRECT_URL = `${window.location.origin}/auth/callback`;
 const SIGNIN_URL_URL = `${BACKEND_ENDPOINT}/socialLogin?redirectUrl=${REDIRECT_URL}`;
 const SIGNOUT_URL = `${BACKEND_ENDPOINT}/auth/socialLogout`;
 const CALLBACK_URL = `${BACKEND_ENDPOINT}/callback`;
-const GOOGLE_TOKEN_URL = `${BACKEND_ENDPOINT}/auth/google/accessToken`;
 
 //SNS認証URL取得
 export const useSigninUrl = (): string => {
@@ -42,7 +41,6 @@ export const useSignOut = () => {
     };
 
     authContext.setSession("");
-    authContext.setGoogleApiToken("");
 
     axios.post(SIGNOUT_URL, null, config).catch((err) => {
       console.log(err);
@@ -52,7 +50,7 @@ export const useSignOut = () => {
 
 //SNS認証コールバックのハンドリング
 export const useAuthCallback = (): [string, (value: string) => void] => {
-  const [session, setSession] = useSession(enumSessionKey.apiAccessToken);
+  const [session, setSession] = useSession(enumSessionKey.session);
   const location = useLocation();
 
   useEffect(() => {
@@ -75,30 +73,4 @@ export const useAuthCallback = (): [string, (value: string) => void] => {
   }, [location.pathname]);
 
   return [session, setSession];
-};
-
-//トークン取得
-export const useGoogleApiToken = (
-  session: string
-): [string, (value: string) => void] => {
-  const [googleApiToken, setGoogleApiToken] = useSession(
-    enumSessionKey.googleApiToken
-  );
-
-  useEffect(() => {
-    if (session) {
-      const config: AxiosRequestConfig = {
-        headers: {
-          Authorization: `Bearer ${session}`,
-        },
-      };
-
-      axios
-        .get<TResGoogleTokenApi>(GOOGLE_TOKEN_URL, config)
-        .then((res) => setGoogleApiToken(res.data.accessToken))
-        .catch((err) => console.log(err));
-    }
-  }, [session]);
-
-  return [googleApiToken, setGoogleApiToken];
 };

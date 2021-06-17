@@ -59,12 +59,12 @@ export const useChannelTags = (channelIds: string[]): TUseChannelTags => {
       .catch((err) => console.log(err));
   };
 
-  useEffect(() => {
-    if (channelIds.length > 0 && !isFirstRendere.current) {
-      getChannelTags();
-      isFirstRendere.current = true;
-    }
-  }, [channelIds]);
+  // useEffect(() => {
+  //   if (channelIds.length > 0 && !isFirstRendere.current) {
+  //     getChannelTags();
+  //     isFirstRendere.current = true;
+  //   }
+  // }, [channelIds]);
 
   return [channelTags, { getChannelTags, addChannelTag, deleteChannelTag }];
 };

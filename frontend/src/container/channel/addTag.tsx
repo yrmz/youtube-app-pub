@@ -12,7 +12,7 @@ type ContainerProps = {
 
 const Container: React.FC<ContainerProps> = (props) => {
   const context = useContext(PrivateContext);
-  const [tags, tagSevice] = context.useTags;
+  const [tags] = context.useTags;
   const handleChange = (checked: boolean, tagId: number) => {
     if (checked) {
       props.channelTagsService.addChannelTag(tagId, props.channelId);

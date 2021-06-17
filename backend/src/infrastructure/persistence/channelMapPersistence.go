@@ -11,11 +11,10 @@ type channelMapPersistence struct {
 	db *gorm.DB
 }
 
-func NewChannelMap() *channelMapPersistence {
-	db := NewMySqlConnection()
+func NewChannelMap(mysql *mysqlConnection) *channelMapPersistence {
 
 	return &channelMapPersistence{
-		db: db.DB,
+		db: mysql.gorm,
 	}
 }
 

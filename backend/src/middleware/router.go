@@ -4,6 +4,7 @@ import (
 	authController "api/src/controllers/auth"
 	googleController "api/src/controllers/google"
 	tagController "api/src/controllers/tag"
+	youtubeController "api/src/controllers/youtube"
 	"net/http"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -43,6 +44,10 @@ func SetupRouter(jwt *jwt.GinJWTMiddleware) *gin.Engine {
 					tag.GET("/channel", tagController.GetChannel)
 					tag.POST("/channel/add", tagController.AddChannel)
 					tag.POST("/channel/delete", tagController.DeleteChannel)
+				}
+				youtube := auth.Group("/youtube")
+				{
+					youtube.GET("/subscriptions", youtubeController.GetSubscriptions)
 				}
 			}
 		}

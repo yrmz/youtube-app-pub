@@ -14,12 +14,13 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	mysql := persistence.NewMySqlConnection()
+	mysql.InitMigration()
+	defer mysql.Close()
 }
 
 func main() {
-	mysql := persistence.NewMySqlConnection()
-	mysql.InitMigration()
-
 	auth := middleware.SetAuthentication()
 	err := auth.MiddlewareInit()
 	if err != nil {

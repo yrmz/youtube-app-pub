@@ -3,32 +3,38 @@ package application
 import (
 	"api/src/domain/model/channel"
 	"api/src/domain/model/tag"
+	"api/src/domain/repository"
 	"api/src/infrastructure/entity"
-	"api/src/middleware/container"
+	"api/src/infrastructure/persistence"
 	"errors"
 )
 
 type tagApplicationService struct {
-	container *container.DiContainer
+	TagRepository        repository.ITagRepository
+	ChannelMapRepository repository.IChannelMapRepository
+	ConnClose            func()
 }
 
 func NewTagApplicationService() *tagApplicationService {
-	container := container.SetDiContainer()
+	mysql := persistence.NewMySqlConnection()
+
 	return &tagApplicationService{
-		container,
+		TagRepository:        persistence.NewTagPersistence(mysql),
+		ChannelMapRepository: persistence.NewChannelMap(mysql),
+		ConnClose:            mysql.Close,
 	}
 }
 
 // チャンネルIDからタグ取得
 func (t *tagApplicationService) GetTags(channelIds []string, userId uint) ([]tag.ChannelMapModel, error) {
-	newChannelMaps := t.container.TagRepository.FindByChannelIDs(channelIds, userId)
+	newChannelMaps := t.TagRepository.FindByChannelIDs(channelIds, userId)
 
 	return newChannelMaps, nil
 }
 
 // タグの一覧取得
 func (t *tagApplicationService) GetTagList(userId uint) []*tag.TagModel {
-	newTags := t.container.TagRepository.FindByUserId(userId)
+	newTags := t.TagRepository.FindByUserId(userId)
 
 	var tags []*tag.TagModel
 	for _, newTag := range newTags {
@@ -41,13 +47,13 @@ func (t *tagApplicationService) GetTagList(userId uint) []*tag.TagModel {
 
 //タグの詳細取得
 func (t *tagApplicationService) GetTageDetail(tageId uint, userId uint) *tag.TagModel {
-	newtag := t.container.TagRepository.FindByTagID(tageId, userId)
+	newtag := t.TagRepository.FindByTagID(tageId, userId)
 	return tag.NewTagModel(newtag.TagID, newtag.UserID, newtag.Name, newtag.Description)
 }
 
 //タグ追加
 func (t *tagApplicationService) UpdateTag(tagId uint, userId uint, name string, description string) {
-	t.container.TagRepository.Upsert(entity.Tag{
+	t.TagRepository.Upsert(entity.Tag{
 		TagID:       tagId,
 		UserID:      userId,
 		Name:        name,
@@ -57,17 +63,17 @@ func (t *tagApplicationService) UpdateTag(tagId uint, userId uint, name string, 
 
 //タグ削除
 func (t *tagApplicationService) DeleteTag(tagId uint, userId uint) {
-	t.container.TagRepository.Delete(tagId, userId)
+	t.TagRepository.Delete(tagId, userId)
 }
 
 //タグ別にチャンネル取得
 func (t *tagApplicationService) GetChannel(tagId uint, userId uint) ([]*channel.ChannelModel, error) {
-	tags := t.container.TagRepository.FindByTagID(tagId, userId)
+	tags := t.TagRepository.FindByTagID(tagId, userId)
 	if &tags == nil {
 		return []*channel.ChannelModel{}, errors.New("tag is not found")
 	}
 
-	channelMaps := t.container.ChannelMapRepository.FindByTagID(tagId)
+	channelMaps := t.ChannelMapRepository.FindByTagID(tagId)
 
 	var channelModels []*channel.ChannelModel
 	for _, channelMap := range channelMaps {
@@ -79,12 +85,12 @@ func (t *tagApplicationService) GetChannel(tagId uint, userId uint) ([]*channel.
 
 //タグにチャンネル追加
 func (t *tagApplicationService) AddChannel(channelId string, tagId uint, userId uint) error {
-	tags := t.container.TagRepository.FindByTagID(tagId, userId)
+	tags := t.TagRepository.FindByTagID(tagId, userId)
 	if &tags == nil {
 		return errors.New("tag is not found")
 	}
 
-	t.container.ChannelMapRepository.Upsert(
+	t.ChannelMapRepository.Upsert(
 		entity.ChannelMap{
 			TagID:     tagId,
 			ChannelID: channelId,
@@ -95,11 +101,11 @@ func (t *tagApplicationService) AddChannel(channelId string, tagId uint, userId 
 
 //タグからチャンネル削除
 func (t *tagApplicationService) DeleteChannel(channelId string, tagId uint, userId uint) error {
-	tags := t.container.TagRepository.FindByTagID(tagId, userId)
+	tags := t.TagRepository.FindByTagID(tagId, userId)
 	if &tags == nil {
 		return errors.New("tag is not exists")
 	}
 
-	t.container.ChannelMapRepository.Delete(channelId, tagId)
+	t.ChannelMapRepository.Delete(channelId, tagId)
 	return nil
 }

@@ -1,5 +1,4 @@
 declare type TStateChannnelList = {
-  prevPageToken: string;
   nextPageToken: string;
   pageInfo: {
     totalResults: number;
@@ -10,11 +9,14 @@ declare type TStateChannnelList = {
     description: string;
     channelId: string;
     thumbnail: string;
+    tags: {
+      tagId: number;
+      tagName: string;
+    }[];
   }[];
 };
 
 declare type TResYoutubeSubscriptionApi = {
-  prevPageToken: string;
   nextPageToken: string;
   pageInfo: {
     totalResults: number;
@@ -25,5 +27,9 @@ declare type TResYoutubeSubscriptionApi = {
     description: string;
     channelId: string;
     thumbnail: string;
+    tags: {
+      tagId: number;
+      tagName: string;
+    }[];
   }[];
 };

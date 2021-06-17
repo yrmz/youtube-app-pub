@@ -12,11 +12,9 @@ type tagPersistence struct {
 	db *gorm.DB
 }
 
-func NewTagRepository() *tagPersistence {
-	db := NewMySqlConnection()
-
+func NewTagPersistence(mysql *mysqlConnection) *tagPersistence {
 	return &tagPersistence{
-		db: db.DB,
+		db: mysql.gorm,
 	}
 }
 

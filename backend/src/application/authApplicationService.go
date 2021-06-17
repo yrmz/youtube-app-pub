@@ -2,20 +2,27 @@ package application
 
 import (
 	"api/src/domain/model/auth"
+	"api/src/domain/repository"
 	"api/src/infrastructure/entity"
+	"api/src/infrastructure/persistence"
 	"api/src/infrastructure/proxy"
-	"api/src/middleware/container"
 
 	"golang.org/x/oauth2"
 )
 
 type authApplicationServie struct {
-	container *container.DiContainer
+	UserRepository repository.IUserRepository
+	GoogleProxy    proxy.IGoogleProxy
+	ConnClose      func()
 }
 
 func NewAuthApplicaionService() *authApplicationServie {
-	container := container.SetDiContainer()
-	return &authApplicationServie{container}
+	mysql := persistence.NewMySqlConnection()
+	return &authApplicationServie{
+		UserRepository: persistence.NewUserPersistence(mysql),
+		GoogleProxy:    proxy.NewGoogleProxy(""),
+		ConnClose:      mysql.Close,
+	}
 }
 
 func (a *authApplicationServie) GetSocialLoginURL(redirectUrl string) string {
@@ -37,11 +44,12 @@ func (a *authApplicationServie) SocialLogin(code string, state string, redirectU
 	}
 
 	//ユーザーが存在しなければ登録を行う
-	newUser := a.container.UserRepository.Insert(entity.User{
+	newUser := a.UserRepository.Insert(entity.User{
 		FirstName: userInfo.GivenName,
 		LastName:  userInfo.FamilyName,
 		Token:     accessToken.AccessToken,
 	})
+	defer a.ConnClose()
 
 	return auth.NewJwtClaimModel(newUser.UserID, newUser.FirstName, newUser.LastName), nil
 }
@@ -49,16 +57,18 @@ func (a *authApplicationServie) SocialLogin(code string, state string, redirectU
 //認可
 func (a *authApplicationServie) Authorization(userId uint) bool {
 	//DBからId検索
-	user := a.container.UserRepository.FindByUserId(userId)
+	user := a.UserRepository.FindByUserId(userId)
 	if &user == nil {
 		return false
 	}
+
+	defer a.ConnClose()
 
 	//GoogleToken検証
 	token := &oauth2.Token{
 		AccessToken: user.Token,
 	}
-	_, err := a.container.GoogleProxy.GetUserInfo(token)
+	_, err := a.GoogleProxy.GetUserInfo(token)
 	isSuccess := err == nil
 
 	return isSuccess

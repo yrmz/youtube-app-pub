@@ -22,11 +22,8 @@ require (
 	github.com/utrack/gin-csrf v0.0.0-20190424104817-40fb8d2c8fca // indirect
 	go.uber.org/dig v1.10.0 // indirect
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
-	golang.org/x/net v0.0.0-20210410081132-afb366fc7cd1 // indirect
-	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
-	google.golang.org/api v0.44.0
-	google.golang.org/genproto v0.0.0-20210406143921-e86de6bf7a46 // indirect
-	google.golang.org/grpc v1.37.0 // indirect
+	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c
+	google.golang.org/api v0.48.0
 	google.golang.org/protobuf v1.26.0
 	gopkg.in/dgrijalva/jwt-go.v3 v3.2.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

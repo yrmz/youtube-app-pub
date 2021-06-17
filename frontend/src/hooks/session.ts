@@ -19,6 +19,5 @@ export const useSession = (
 };
 
 export enum enumSessionKey {
-  apiAccessToken = "apiAccessToken",
-  googleApiToken = "googleApiToken",
+  session = "session",
 }

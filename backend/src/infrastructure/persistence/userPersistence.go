@@ -11,11 +11,9 @@ type userPersistence struct {
 	db *gorm.DB
 }
 
-func NewUserRepository() *userPersistence {
-	db := NewMySqlConnection()
-
+func NewUserPersistence(mysql *mysqlConnection) *userPersistence {
 	return &userPersistence{
-		db: db.DB,
+		db: mysql.gorm,
 	}
 }
 
@@ -26,10 +24,8 @@ func (u *userPersistence) FindByUserId(userId uint) entity.User {
 }
 
 func (u *userPersistence) FindByEmail(email string) entity.User {
-
 	var user entity.User
 	u.db.First(&user, entity.User{Email: email})
-
 	return user
 }
 
