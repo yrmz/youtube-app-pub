@@ -2,6 +2,7 @@ version: "3"
 
 services:
   db:
+    container_name: youtube_app_db
     build: ./db #Dockerfileからビルドすることを示す
     image: mysql
     volumes:
@@ -14,6 +15,7 @@ services:
       MYSQL_DATABASE: youtube_app
 
   backend:
+    container_name: youtube_app_api
     build: ./backend
     image: backend
     environment:
@@ -28,6 +30,7 @@ services:
     tty: true
 
   frontend:
+    container_name: youtube_app_ui
     build: ./frontend
     image: frontend
     volumes:
