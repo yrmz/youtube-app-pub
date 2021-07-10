@@ -1,4 +1,4 @@
-import { useTags } from 'hooks/backend/tag';
+import { useTags } from 'hooks/tag';
 import React from 'react';
 
 type ContextProps = {

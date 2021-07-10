@@ -7,7 +7,7 @@ type ContainerProps = {
   className?: string;
   channelId: string;
   channelTags: { tagId: number; tagName: string }[];
-  channelTagsService: TChannelTagsService;
+  channelService: TYoutubeSubscriptionService;
 };
 
 const Container: React.FC<ContainerProps> = (props) => {
@@ -15,9 +15,9 @@ const Container: React.FC<ContainerProps> = (props) => {
   const [tags] = context.useTags;
   const handleChange = (checked: boolean, tagId: number) => {
     if (checked) {
-      props.channelTagsService.addChannelTag(tagId, props.channelId);
+      props.channelService.addChannelTag(tagId, props.channelId);
     } else {
-      props.channelTagsService.deleteChannelTag(tagId, props.channelId);
+      props.channelService.deleteChannelTag(tagId, props.channelId);
     }
   };
 

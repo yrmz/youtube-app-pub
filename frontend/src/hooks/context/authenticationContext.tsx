@@ -1,7 +1,7 @@
 import React, { createContext, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { useAuthCallback } from '../backend/auth';
+import { useAuthCallback } from '../auth';
 
 type ContextProps = {
   session: string;

@@ -9,7 +9,7 @@ type ContainerProps = {
   title: string;
   description: string;
   channelId: string;
-  channelTagService: TChannelTagsService;
+  channelService: TYoutubeSubscriptionService;
   tags: { tagId: number; tagName: string }[];
 };
 
@@ -33,7 +33,7 @@ const Container: React.FC<ContainerProps> = (props) => {
             key={idx}
             name={v.tagName}
             onClick={() =>
-              props.channelTagService.deleteChannelTag(v.tagId, props.channelId)
+              props.channelService.deleteChannelTag(v.tagId, props.channelId)
             }
           />
         ))}
@@ -45,7 +45,7 @@ const Container: React.FC<ContainerProps> = (props) => {
           <AddTag
             channelId={props.channelId}
             channelTags={props.tags}
-            channelTagsService={props.channelTagService}
+            channelService={props.channelService}
           />
         </CustomModal>
       </div>

@@ -1,4 +1,4 @@
-import { useSigninUrl } from 'hooks/backend/auth';
+import { useSigninUrl } from 'hooks/auth';
 import SigninButton from 'image/btn_google_signin_light_normal.png';
 import SigninedButton from 'image/btn_google_signin_light_pressed.png';
 import React, { useState } from 'react';

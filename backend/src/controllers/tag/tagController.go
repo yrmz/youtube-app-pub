@@ -166,7 +166,7 @@ func AddChannel(c *gin.Context) {
 	claims := claims.NewClaimsModel(c)
 
 	tagApplicationService := application.NewTagApplicationService()
-	err := tagApplicationService.AddChannel(request.ChannelId, request.TagId, claims.UserId)
+	tags, err := tagApplicationService.AddChannel(request.ChannelId, request.TagId, claims.UserId)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -174,7 +174,19 @@ func AddChannel(c *gin.Context) {
 		})
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	response := AddTagResponse{
+		ChannelId: request.ChannelId,
+		Tags:      []TagPartGetTagsResponse{},
+	}
+	for _, tag := range tags {
+		// fmt.Println(tag)
+		response.Tags = append(response.Tags, TagPartGetTagsResponse{
+			TagId:   tag.Id,
+			TagName: tag.Name,
+		})
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 //タグからチャンネル削除
@@ -189,7 +201,24 @@ func DeleteChannel(c *gin.Context) {
 	claims := claims.NewClaimsModel(c)
 
 	tagApplicationService := application.NewTagApplicationService()
-	tagApplicationService.DeleteChannel(request.ChannelId, request.TagId, claims.UserId)
+	tags, err := tagApplicationService.DeleteChannel(request.ChannelId, request.TagId, claims.UserId)
 
-	c.JSON(http.StatusOK, gin.H{})
+	response := DeleteTagResponse{
+		ChannelId: request.ChannelId,
+		Tags:      []TagPartGetTagsResponse{},
+	}
+	for _, tag := range tags {
+		response.Tags = append(response.Tags, TagPartGetTagsResponse{
+			TagId:   tag.Id,
+			TagName: tag.Name,
+		})
+	}
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+
+	c.JSON(http.StatusOK, response)
 }

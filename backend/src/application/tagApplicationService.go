@@ -84,10 +84,10 @@ func (t *tagApplicationService) GetChannel(tagId uint, userId uint) ([]*channel.
 }
 
 //タグにチャンネル追加
-func (t *tagApplicationService) AddChannel(channelId string, tagId uint, userId uint) error {
+func (t *tagApplicationService) AddChannel(channelId string, tagId uint, userId uint) ([]*tag.TagModel, error) {
 	tags := t.TagRepository.FindByTagID(tagId, userId)
 	if &tags == nil {
-		return errors.New("tag is not found")
+		return nil, errors.New("tag is not found")
 	}
 
 	t.ChannelMapRepository.Upsert(
@@ -96,16 +96,31 @@ func (t *tagApplicationService) AddChannel(channelId string, tagId uint, userId 
 			ChannelID: channelId,
 		})
 
-	return nil
+	newTags := t.TagRepository.FindByChannelID(channelId, userId)
+
+	var tagModels []*tag.TagModel
+	for _, newTag := range newTags {
+		tagModels = append(tagModels, tag.NewTagModel(newTag.TagID, newTag.UserID, newTag.Name, newTag.Description))
+	}
+
+	return tagModels, nil
 }
 
 //タグからチャンネル削除
-func (t *tagApplicationService) DeleteChannel(channelId string, tagId uint, userId uint) error {
+func (t *tagApplicationService) DeleteChannel(channelId string, tagId uint, userId uint) ([]*tag.TagModel, error) {
 	tags := t.TagRepository.FindByTagID(tagId, userId)
 	if &tags == nil {
-		return errors.New("tag is not exists")
+		return nil, errors.New("tag is not exists")
 	}
 
 	t.ChannelMapRepository.Delete(channelId, tagId)
-	return nil
+
+	newTags := t.TagRepository.FindByChannelID(channelId, userId)
+
+	var tagModels []*tag.TagModel
+	for _, newTag := range newTags {
+		tagModels = append(tagModels, tag.NewTagModel(newTag.TagID, newTag.UserID, newTag.Name, newTag.Description))
+	}
+
+	return tagModels, nil
 }

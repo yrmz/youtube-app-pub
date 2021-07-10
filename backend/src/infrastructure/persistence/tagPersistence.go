@@ -33,7 +33,16 @@ func (t *tagPersistence) FindByUserId(userId uint) []entity.Tag {
 func (t *tagPersistence) FindByChannelID(channelId string, userId uint) []entity.Tag {
 	var tags []entity.Tag
 
-	t.db.Joins("JOIN channel_maps ON tags.tag_id=channel_maps.tag_id").Where("tags.user_id=? AND channel_maps.channel_id=? AND channel_maps.deleted_at IS NULL", userId, channelId).Find(&tags)
+	t.db.Raw(`
+	select t.*
+	from tags t
+	JOIN channel_maps cm ON t.tag_id=cm.tag_id
+	where 
+	t.user_id=?
+	AND t.deleted_at IS NULL
+	AND cm.channel_id=?
+	AND cm.deleted_at IS NULL;
+	`, userId, channelId).Scan(&tags)
 
 	return tags
 }

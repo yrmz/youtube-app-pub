@@ -1,5 +1,4 @@
-import { useChannels } from 'hooks/backend/channel';
-import { useChannelTags } from 'hooks/backend/channelTags';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useYoutubeChannelList } from 'hooks/youtube';
 import React from 'react';
 import { Col, Container as BsContainer, Image, Row } from 'react-bootstrap';
@@ -16,16 +15,13 @@ type ContainerProps = {
 // DOM層
 const Container: React.FC<ContainerProps> = (props) => {
   const { tagId } = useParams<{ tagId?: string }>();
-  const [channelList, isLoading, getChannelList] = useYoutubeChannelList(tagId);
-  const [, channelTagService] = useChannelTags(
-    channelList.items.map((v) => v.channelId)
-  );
+  const [channelList, isLoading, channelService] = useYoutubeChannelList(tagId);
 
   return (
     <div className={props.className}>
       <BsContainer>
         {channelList.items.map((v, idx) => (
-          <Row key={idx} className="my-5">
+          <Row key={idx} className="py-3">
             <Col lg={1}>
               <Image src={v.thumbnail} decoding="async" roundedCircle fluid />
             </Col>
@@ -35,7 +31,7 @@ const Container: React.FC<ContainerProps> = (props) => {
                 description={v.description}
                 channelId={v.channelId}
                 tags={v.tags}
-                channelTagService={channelTagService}
+                channelService={channelService}
               />
             </Col>
           </Row>
@@ -44,7 +40,7 @@ const Container: React.FC<ContainerProps> = (props) => {
       <footer>
         {isLoading && <div>loading...</div>}
         {channelList.nextPageToken && !isLoading && (
-          <Link to="#" onClick={() => getChannelList()}>
+          <Link to="#" onClick={channelService.getChannelList}>
             さらに読み込む
           </Link>
         )}

@@ -29,7 +29,7 @@ const Component: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className={props.className}>
+    <nav className={props.className}>
       <ul>
         <li>
           <Link to="/app">一覧</Link>
@@ -49,20 +49,26 @@ const Component: React.FC<Props> = (props) => {
             </li>
           ))}
       </ul>
-    </div>
+    </nav>
   );
 };
 
 //Style層
 export const SideBar = styled(Component)`
+  padding: 80px 0 0;
+  position: fixed;
+
   ul {
     list-style-type: none;
+    padding: 0;
+    margin: 0;
   }
   li {
     display: flex;
     justify-content: space-between;
+    width: 180px;
     margin: 2px 0;
-    padding: 2px 0;
+    padding: 2px 15px;
     border-bottom: 1px solid #dcdcdc;
   }
   .label {

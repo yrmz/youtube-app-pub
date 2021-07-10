@@ -25,3 +25,13 @@ type GetTagDetailResponse struct {
 type GetChannelResponse struct {
 	ChannelIds []string `json:"channelIds"`
 }
+
+type AddTagResponse struct {
+	ChannelId string                   `json:"channelId"`
+	Tags      []TagPartGetTagsResponse `json:"tags"`
+}
+
+type DeleteTagResponse struct {
+	ChannelId string                   `json:"channelId"`
+	Tags      []TagPartGetTagsResponse `json:"tags"`
+}
