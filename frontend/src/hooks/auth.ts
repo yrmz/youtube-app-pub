@@ -1,6 +1,7 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig } from 'axios';
 import { AuthContext } from 'hooks/context/authenticationContext';
 import { enumSessionKey, useSession } from 'hooks/session';
+import useHttpClient from 'hooks/useHttpClient';
 import { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -14,8 +15,10 @@ const CALLBACK_URL = `${BACKEND_ENDPOINT}/callback`;
 //SNS認証URL取得
 export const useSigninUrl = (): string => {
   const [url, setUrl] = useState("");
+  const httpClient = useHttpClient();
+
   useEffect(() => {
-    axios
+    httpClient
       .get<TResSigninUrlApi>(SIGNIN_URL_URL, {})
       .then((res) => setUrl(res.data.url))
       .catch((err) => console.log(err));
@@ -27,13 +30,9 @@ export const useSigninUrl = (): string => {
 //ログアウト
 export const useSignOut = () => {
   const authContext = useContext(AuthContext);
+  const httpClient = useHttpClient();
 
   return () => {
-    // axios.interceptors.request.use((req) => {
-    //   console.log(req);
-    //   return req;
-    // });
-
     const config: AxiosRequestConfig = {
       headers: {
         Authorization: `Bearer ${authContext.session}`,
@@ -41,16 +40,14 @@ export const useSignOut = () => {
     };
 
     authContext.setSession("");
-
-    axios.post(SIGNOUT_URL, null, config).catch((err) => {
-      console.log(err);
-    });
+    httpClient.post(SIGNOUT_URL, null, config);
   };
 };
 
 //SNS認証コールバックのハンドリング
 export const useAuthCallback = (): [string, (value: string) => void] => {
   const [session, setSession] = useSession(enumSessionKey.session);
+  const httpClient = useHttpClient();
   const location = useLocation();
 
   useEffect(() => {
@@ -65,10 +62,9 @@ export const useAuthCallback = (): [string, (value: string) => void] => {
         redirectUrl: REDIRECT_URL,
       };
 
-      axios
+      httpClient
         .post<TResCallbackApi>(CALLBACK_URL, body)
-        .then((res) => setSession(res.data.token))
-        .catch((err) => console.log(err));
+        .then((res) => setSession(res.data.token));
     }
   }, [location.pathname]);
 

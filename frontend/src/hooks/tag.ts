@@ -1,5 +1,6 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig } from 'axios';
 import { AuthContext } from 'hooks/context/authenticationContext';
+import useHttpClient from 'hooks/useHttpClient';
 import { useContext, useEffect, useState } from 'react';
 
 const BACKEND_ENDPOINT = process.env.REACT_APP_BACKEND_ENDPOINT;
@@ -10,6 +11,7 @@ const DELETE_TAG_URL = `${BACKEND_ENDPOINT}/auth/tags/delete`;
 
 export const useTags = (): TUseTags => {
   const authContext = useContext(AuthContext);
+  const httpClient = useHttpClient();
   const [tags, setTags] = useState<TStateTag[]>([]);
 
   const config: AxiosRequestConfig = {
@@ -20,7 +22,7 @@ export const useTags = (): TUseTags => {
 
   // タグ一覧取得
   const getTags = () => {
-    axios
+    httpClient
       .get<TResTagDetailApi[]>(TAG_LIST_URL, config)
       .then((res) => {
         const tags = res.data.map<TStateTag>((v) => ({
@@ -39,7 +41,7 @@ export const useTags = (): TUseTags => {
     name: string;
     description: string;
   }) => {
-    axios
+    httpClient
       .post(
         ADD_TAG_URL,
         {
@@ -55,8 +57,7 @@ export const useTags = (): TUseTags => {
 
   // タグ削除
   const deleteTag = (tagId: number) => {
-    console.log(tagId);
-    axios
+    httpClient
       .post(DELETE_TAG_URL, { tagId: tagId }, config)
       .then(() => getTags())
       .catch((err) => console.log(err));

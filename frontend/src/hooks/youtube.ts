@@ -1,4 +1,5 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig } from 'axios';
+import useHttpClient from 'hooks/useHttpClient';
 import { Reducer, useContext, useEffect, useReducer, useState } from 'react';
 
 import { AuthContext } from './context/authenticationContext';
@@ -55,9 +56,9 @@ const reducer: Reducer<TStateChannnelList, TActionChannelList> = (
 export const useYoutubeChannelList = (
   tagId?: string
 ): [TStateChannnelList, boolean, TYoutubeSubscriptionService] => {
+  const httpClient = useHttpClient();
   const authContext = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const [state, dispatch] = useReducer(reducer, initChannnelList);
 
@@ -78,19 +79,18 @@ export const useYoutubeChannelList = (
     }
     url.search = params.toString();
 
-    return axios
+    return httpClient
       .get<TResYoutubeSubscriptionApi>(url.href, config)
       .then((res) =>
         dispatch({
           type: "addChannelList",
           payload: { addChannelList: res.data },
         })
-      )
-      .catch((err) => setError(err));
+      );
   };
 
   const addChannelTag = (tagId: number, channelId: string) => {
-    axios
+    httpClient
       .post<TResAddTag>(
         TAGS_ADD_CHANNEL,
         { channelId: channelId, tagId: tagId },
@@ -111,7 +111,7 @@ export const useYoutubeChannelList = (
   };
 
   const deleteChannelTag = (tagId: number, channelId: string) => {
-    axios
+    httpClient
       .post<TResDeleteTag>(
         TAGS_DELETE_CHANNEL,
         { channelId: channelId, tagId: tagId },
