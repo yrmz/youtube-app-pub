@@ -1,11 +1,12 @@
+import { TSession, TSessionService } from 'hooks/session';
 import React, { createContext, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { useAuthCallback } from '../auth';
 
 type ContextProps = {
-  session: string;
-  setSession: (value: string) => void;
+  session: TSession;
+  sessionService: TSessionService;
 };
 
 type ProviderProps = {
@@ -15,13 +16,16 @@ type ProviderProps = {
 
 //初期設定
 export const AuthContext = createContext<ContextProps>({
-  session: "",
-  setSession: (value: string) => {},
+  session: null,
+  sessionService: {
+    setSession: (token: TSession) => {},
+    resetSession: () => {},
+  },
 });
 
 //認証のハンドリング
 export const useAuthenticate = (
-  session: string,
+  session: TSession,
   pubRoot: string,
   authRoot: string
 ) => {
@@ -43,7 +47,7 @@ export const AuthProvider: React.FC<ProviderProps> = ({
   pubRoot,
   authRoot,
 }) => {
-  const [session, setSession] = useAuthCallback();
+  const [session, sessionService] = useAuthCallback();
 
   useAuthenticate(session, pubRoot, authRoot);
 
@@ -51,7 +55,7 @@ export const AuthProvider: React.FC<ProviderProps> = ({
     <AuthContext.Provider
       value={{
         session,
-        setSession,
+        sessionService,
       }}
     >
       {children}

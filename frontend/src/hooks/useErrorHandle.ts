@@ -5,12 +5,12 @@ import { AuthContext } from './context/authenticationContext';
 
 export type TErrorHandle = {
   status: number;
-  messaga: string;
+  message: string;
 };
 
 export const initErrorHandle: TErrorHandle = {
   status: 200,
-  messaga: "",
+  message: "",
 };
 
 export const useErrorHandle = (): [
@@ -23,10 +23,9 @@ export const useErrorHandle = (): [
   const history = useHistory();
 
   useEffect(() => {
-    console.log("use " + error);
     const url = context.session ? "/app/error" : "/error";
     if (error.status === 401 || error.status === 403) {
-      context.setSession("");
+      context.sessionService.resetSession();
       setError(initErrorHandle);
     } else if (error.status >= 400) {
       history.push(url);

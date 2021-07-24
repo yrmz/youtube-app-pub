@@ -1,4 +1,4 @@
-import { TErrorHandle, useErrorHandle } from 'hooks/useErrorHandle';
+import { initErrorHandle, TErrorHandle, useErrorHandle } from 'hooks/useErrorHandle';
 import React from 'react';
 
 type ContextProps = {
@@ -7,7 +7,7 @@ type ContextProps = {
 };
 
 export const GlobalContext = React.createContext<ContextProps>({
-  error: { status: 200, messaga: "" },
+  error: initErrorHandle,
   setError: () => {},
 });
 

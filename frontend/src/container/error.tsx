@@ -11,7 +11,7 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return (
     <div className={props.className}>
-      {context.error.status} {context.error.messaga}
+      {context.error.status} {context.error.message}
     </div>
   );
 };
