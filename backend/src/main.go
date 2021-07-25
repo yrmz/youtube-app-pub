@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/joho/godotenv"
 )
 
@@ -27,5 +28,16 @@ func main() {
 		panic(err.Error())
 	}
 	router := middleware.SetupRouter(auth)
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST"},
+		AllowHeaders: []string{
+			"Content-Type",
+			"Content-Length",
+			"Accept-Encoding",
+			"X-CSRF-Token",
+			"Authorization",
+		},
+	}))
 	router.Run()
 }
