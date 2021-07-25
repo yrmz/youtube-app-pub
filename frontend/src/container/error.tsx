@@ -11,9 +11,13 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return (
     <div className={props.className}>
-      {context.error.status} {context.error.message}
+      <h2>{context.error.status}</h2>
+      <h2>{context.error.message}</h2>
     </div>
   );
 };
 
-export const ErrorPage = styled(Container)``;
+export const ErrorPage = styled(Container)`
+  text-align: center;
+  color: #c35757;
+`;

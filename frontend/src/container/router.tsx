@@ -20,12 +20,12 @@ const routerProps: RouterProps = {
   private: [
     { path: "/app", Component: ChannelList },
     { path: "/app/list/:tagId", Component: ChannelList },
-    { path: "/app/error/:status", Component: ErrorPage },
+    { path: "/app/error", Component: ErrorPage },
   ],
   public: [
     { path: "/callback", Component: Callback },
     { path: "/", Component: Signin },
-    { path: "/error/:status", Component: ErrorPage },
+    { path: "/error", Component: ErrorPage },
   ],
 };
 
