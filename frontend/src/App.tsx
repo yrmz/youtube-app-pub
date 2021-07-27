@@ -8,11 +8,11 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { ErrorBoundary } from '@sentry/react';
 
 function App() {
-  console.log(process.env.NODE_ENV);
   return (
     // <ErrorBoundary fallback="error" showDialog>
     <Router>
       <AuthProvider pubRoot="/" authRoot="/app">
+        {/* <button onClick={methodDoesNotExist}>Break the world</button> */}
         <GlobalProvider>
           <Route />
         </GlobalProvider>
