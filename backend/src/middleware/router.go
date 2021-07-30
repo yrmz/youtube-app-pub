@@ -11,20 +11,28 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter(jwt *jwt.GinJWTMiddleware) *gin.Engine {
+func SetupRouter(jwt *jwt.GinJWTMiddleware, sentry *sentryGin) *gin.Engine {
 
 	router := gin.Default()
+	router.Use(sentry.SentryHandler)
+	router.Use(sentry.HubScopeHandler)
+
 	router.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusBadRequest, "")
 	})
 
-	v1 := router.Group("/v1")
+	router.GET("/foo", func(ctx *gin.Context) {
+		panic("y tho")
+	})
+
+	v1 := router.Group("/api/v1")
 	{
 		v1.GET("/socialLogin", authController.GetSocialLoginURL)
 		v1.POST("/callback", jwt.LoginHandler)
 
 		auth := v1.Group("/auth")
 		{
+
 			auth.GET("/refresh", jwt.RefreshHandler)
 			auth.Use(jwt.MiddlewareFunc())
 			{

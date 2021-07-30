@@ -16,8 +16,8 @@ func SetAuthentication() *jwt.GinJWTMiddleware {
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "Asia/Tokyo",
 		Key:         []byte(os.Getenv("AUTHENTICATION_SECRET")),
-		Timeout:     time.Hour * 24,
-		MaxRefresh:  time.Hour * 24,
+		Timeout:     24 * time.Hour,
+		MaxRefresh:  24 * time.Hour,
 		IdentityKey: reflect.TypeOf(auth.SocialLoginResponse{}.UserId).String(),
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if u, ok := data.(*auth.SocialLoginResponse); ok {
