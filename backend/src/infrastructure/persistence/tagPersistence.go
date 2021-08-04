@@ -3,6 +3,7 @@ package persistence
 import (
 	"api/src/domain/model/tag"
 	"api/src/infrastructure/entity"
+	"regexp"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -32,6 +33,11 @@ func (t *tagPersistence) FindByUserId(userId uint) []entity.Tag {
 
 func (t *tagPersistence) FindByChannelID(channelId string, userId uint) []entity.Tag {
 	var tags []entity.Tag
+
+	r := regexp.MustCompile("^[0-9A-z]+$")
+	if !r.MatchString(channelId) {
+		panic("ChannelID is invalided")
+	}
 
 	t.db.Raw(`
 	select t.*

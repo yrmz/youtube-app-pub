@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -15,7 +16,7 @@ type youtubeProxy struct {
 func NewYoutubeProxy() *youtubeProxy {
 
 	return &youtubeProxy{
-		url: "https://www.googleapis.com/youtube/v3/subscriptions",
+		url: os.Getenv("YOUTUBE_API_URL"),
 	}
 }
 
