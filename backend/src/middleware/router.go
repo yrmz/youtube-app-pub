@@ -20,9 +20,8 @@ func SetupRouter(jwt *jwt.GinJWTMiddleware, sentry *sentryGin) *gin.Engine {
 	router.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusBadRequest, "")
 	})
-
-	router.GET("/foo", func(ctx *gin.Context) {
-		panic("y tho")
+	router.GET("/alive", func(c *gin.Context) {
+		c.String(http.StatusOK, "")
 	})
 
 	v1 := router.Group("/api/v1")
